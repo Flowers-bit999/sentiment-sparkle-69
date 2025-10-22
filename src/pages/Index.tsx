@@ -97,15 +97,15 @@ const Index = () => {
             <p className="text-xl lg:text-2xl mb-8 text-white/90">
               Descubre qué piensan realmente los usuarios sobre los productos con análisis impulsado por IA
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center max-w-2xl mx-auto">
-              <div className="relative flex-1 w-full">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center max-w-2xl mx-auto animate-fade-in" style={{ animationDelay: '200ms' }}>
+              <div className="relative flex-1 w-full group">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground transition-transform duration-300 group-focus-within:scale-110" />
                 <Input 
                   placeholder="Buscar productos..." 
-                  className="pl-10 h-12 bg-card border-white/20"
+                  className="pl-10 h-12 bg-card border-white/20 transition-all duration-300 focus:ring-2 focus:ring-white/30"
                 />
               </div>
-              <Button size="lg" className="h-12 px-8 bg-white text-primary hover:bg-white/90">
+              <Button size="lg" className="h-12 px-8 bg-white text-primary hover:bg-white/90 transition-all duration-300 hover:scale-105 hover:shadow-xl">
                 Buscar
               </Button>
             </div>
@@ -117,27 +117,27 @@ const Index = () => {
       <section className="py-16 bg-card border-y border-border">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="flex flex-col items-center text-center p-6">
-              <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-4">
-                <BarChart3 className="h-8 w-8 text-primary" />
+            <div className="flex flex-col items-center text-center p-6 animate-fade-in group cursor-pointer hover:-translate-y-2 transition-all duration-500">
+              <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-all duration-500 group-hover:shadow-lg">
+                <BarChart3 className="h-8 w-8 text-primary group-hover:scale-110 transition-transform duration-500" />
               </div>
               <h3 className="text-xl font-semibold mb-2 text-foreground">Análisis Avanzado</h3>
               <p className="text-muted-foreground">
                 IA que procesa miles de reseñas para darte insights precisos
               </p>
             </div>
-            <div className="flex flex-col items-center text-center p-6">
-              <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-4">
-                <TrendingUp className="h-8 w-8 text-primary" />
+            <div className="flex flex-col items-center text-center p-6 animate-fade-in group cursor-pointer hover:-translate-y-2 transition-all duration-500" style={{ animationDelay: '150ms' }}>
+              <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-all duration-500 group-hover:shadow-lg">
+                <TrendingUp className="h-8 w-8 text-primary group-hover:scale-110 transition-transform duration-500" />
               </div>
               <h3 className="text-xl font-semibold mb-2 text-foreground">Tendencias en Tiempo Real</h3>
               <p className="text-muted-foreground">
                 Monitorea cambios en la percepción de productos instantáneamente
               </p>
             </div>
-            <div className="flex flex-col items-center text-center p-6">
-              <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-4">
-                <Shield className="h-8 w-8 text-primary" />
+            <div className="flex flex-col items-center text-center p-6 animate-fade-in group cursor-pointer hover:-translate-y-2 transition-all duration-500" style={{ animationDelay: '300ms' }}>
+              <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-all duration-500 group-hover:shadow-lg">
+                <Shield className="h-8 w-8 text-primary group-hover:scale-110 transition-transform duration-500" />
               </div>
               <h3 className="text-xl font-semibold mb-2 text-foreground">Reseñas Verificadas</h3>
               <p className="text-muted-foreground">
@@ -162,8 +162,10 @@ const Index = () => {
             </div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {products.map((product) => (
-              <ProductCard key={product.id} {...product} />
+            {products.map((product, index) => (
+              <div key={product.id} style={{ animationDelay: `${index * 100}ms` }}>
+                <ProductCard {...product} />
+              </div>
             ))}
           </div>
         </div>
@@ -180,7 +182,9 @@ const Index = () => {
           </p>
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {featuredReviews.map((review, index) => (
-              <ReviewCard key={index} {...review} />
+              <div key={index} style={{ animationDelay: `${index * 150}ms` }}>
+                <ReviewCard {...review} />
+              </div>
             ))}
           </div>
         </div>

@@ -24,13 +24,14 @@ export const ProductCard = ({
   sentimentScore,
 }: ProductCardProps) => {
   return (
-    <Card className="shadow-card hover:shadow-hover transition-smooth overflow-hidden group cursor-pointer">
-      <div className="aspect-square overflow-hidden bg-gradient-card">
+    <Card className="shadow-card hover:shadow-hover transition-all duration-500 hover:-translate-y-2 overflow-hidden group cursor-pointer animate-slide-up">
+      <div className="aspect-square overflow-hidden bg-gradient-card relative">
         <img
           src={image}
           alt={name}
-          className="w-full h-full object-cover group-hover:scale-105 transition-smooth"
+          className="w-full h-full object-cover group-hover:scale-110 transition-all duration-700"
         />
+        <div className="absolute inset-0 bg-gradient-to-t from-primary/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
       </div>
       <CardContent className="p-6">
         <h3 className="font-semibold text-lg text-foreground mb-2 line-clamp-2">{name}</h3>
@@ -57,7 +58,7 @@ export const ProductCard = ({
             </div>
             <div className="h-2 w-full overflow-hidden rounded-full bg-secondary">
               <div 
-                className="h-full bg-sentiment-positive transition-all"
+                className="h-full bg-sentiment-positive transition-all duration-1000 ease-out group-hover:shadow-[0_0_10px_rgba(34,197,94,0.5)]"
                 style={{ width: `${sentimentScore.positive}%` }}
               />
             </div>
@@ -68,7 +69,7 @@ export const ProductCard = ({
             </div>
             <div className="h-2 w-full overflow-hidden rounded-full bg-secondary">
               <div 
-                className="h-full bg-sentiment-neutral transition-all"
+                className="h-full bg-sentiment-neutral transition-all duration-1000 ease-out delay-100"
                 style={{ width: `${sentimentScore.neutral}%` }}
               />
             </div>
@@ -79,7 +80,7 @@ export const ProductCard = ({
             </div>
             <div className="h-2 w-full overflow-hidden rounded-full bg-secondary">
               <div 
-                className="h-full bg-sentiment-negative transition-all"
+                className="h-full bg-sentiment-negative transition-all duration-1000 ease-out delay-200"
                 style={{ width: `${sentimentScore.negative}%` }}
               />
             </div>

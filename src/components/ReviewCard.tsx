@@ -20,7 +20,7 @@ export const ReviewCard = ({
   verified = false,
 }: ReviewCardProps) => {
   return (
-    <Card className="shadow-card hover:shadow-hover transition-smooth">
+    <Card className="shadow-card hover:shadow-hover transition-all duration-500 hover:-translate-y-1 animate-scale-in group">
       <CardContent className="p-6">
         <div className="flex items-start justify-between mb-4">
           <div className="flex-1">
@@ -38,9 +38,10 @@ export const ReviewCard = ({
                   <Star
                     key={i}
                     className={cn(
-                      "h-4 w-4",
-                      i < rating ? "fill-primary text-primary" : "fill-muted text-muted"
+                      "h-4 w-4 transition-all duration-300",
+                      i < rating ? "fill-primary text-primary group-hover:scale-110" : "fill-muted text-muted"
                     )}
+                    style={{ transitionDelay: `${i * 50}ms` }}
                   />
                 ))}
               </div>
