@@ -5,6 +5,7 @@ type Sentiment = "positive" | "negative" | "neutral";
 
 interface SentimentBadgeProps {
   sentiment: Sentiment;
+  count?: number;
   className?: string;
 }
 
@@ -32,7 +33,7 @@ const sentimentConfig = {
   },
 };
 
-export const SentimentBadge = ({ sentiment, className }: SentimentBadgeProps) => {
+export const SentimentBadge = ({ sentiment, count, className }: SentimentBadgeProps) => {
   const config = sentimentConfig[sentiment];
   const Icon = config.icon;
 
@@ -47,6 +48,9 @@ export const SentimentBadge = ({ sentiment, className }: SentimentBadgeProps) =>
     >
       <Icon className={cn("h-4 w-4 transition-transform duration-300 hover:rotate-12", config.iconColor)} />
       {config.label}
+      {count !== undefined && (
+        <span className="ml-1 font-semibold">({count})</span>
+      )}
     </span>
   );
 };
