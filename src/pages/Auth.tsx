@@ -6,6 +6,16 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
+import { z } from "zod";
+
+const loginSchema = z.object({
+  email: z.string().trim().email("Debe ser un email válido").max(255, "El email debe tener menos de 255 caracteres"),
+  password: z.string().min(6, "La contraseña debe tener al menos 6 caracteres")
+});
+
+const signupSchema = loginSchema.extend({
+  displayName: z.string().trim().min(1, "El nombre es requerido").max(100, "El nombre debe tener menos de 100 caracteres")
+});
 
 const Auth = () => {
   const navigate = useNavigate();
@@ -29,22 +39,28 @@ const Auth = () => {
 
     try {
       if (isLogin) {
+        // Validate login data
+        const validatedData = loginSchema.parse({ email, password });
+
         const { error } = await supabase.auth.signInWithPassword({
-          email,
-          password,
+          email: validatedData.email,
+          password: validatedData.password,
         });
 
         if (error) throw error;
         toast.success("¡Bienvenido de nuevo!");
         navigate("/");
       } else {
+        // Validate signup data
+        const validatedData = signupSchema.parse({ email, password, displayName });
+
         const { error } = await supabase.auth.signUp({
-          email,
-          password,
+          email: validatedData.email,
+          password: validatedData.password,
           options: {
             emailRedirectTo: `${window.location.origin}/`,
             data: {
-              display_name: displayName,
+              display_name: validatedData.displayName,
             },
           },
         });
@@ -54,7 +70,11 @@ const Auth = () => {
         navigate("/");
       }
     } catch (error: any) {
-      toast.error(error.message || "Ocurrió un error");
+      if (error instanceof z.ZodError) {
+        toast.error(error.errors[0].message);
+      } else {
+        toast.error(error.message || "Ocurrió un error");
+      }
     } finally {
       setLoading(false);
     }

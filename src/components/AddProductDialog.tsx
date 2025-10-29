@@ -7,6 +7,17 @@ import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Plus } from "lucide-react";
 import { toast } from "sonner";
+import { z } from "zod";
+
+const productSchema = z.object({
+  name: z.string().trim().min(1, "El nombre es requerido").max(200, "El nombre debe tener menos de 200 caracteres"),
+  description: z.string().max(2000, "La descripción debe tener menos de 2000 caracteres").optional(),
+  category: z.string().max(100, "La categoría debe tener menos de 100 caracteres").optional(),
+  image_url: z.union([
+    z.string().url("Debe ser una URL válida").max(500, "La URL debe tener menos de 500 caracteres"),
+    z.literal("")
+  ]).optional()
+});
 
 interface AddProductDialogProps {
   onProductAdded: () => void;
@@ -30,11 +41,14 @@ const AddProductDialog = ({ onProductAdded }: AddProductDialogProps) => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error("No autenticado");
 
+      // Validate input
+      const validatedData = productSchema.parse(formData);
+
       const { error } = await supabase.from("products").insert({
-        name: formData.name,
-        description: formData.description,
-        category: formData.category,
-        image_url: formData.image_url,
+        name: validatedData.name,
+        description: validatedData.description || null,
+        category: validatedData.category || null,
+        image_url: validatedData.image_url || null,
         user_id: user.id,
       });
 
@@ -45,7 +59,11 @@ const AddProductDialog = ({ onProductAdded }: AddProductDialogProps) => {
       setOpen(false);
       onProductAdded();
     } catch (error: any) {
-      toast.error(error.message || "Error al agregar producto");
+      if (error instanceof z.ZodError) {
+        toast.error(error.errors[0].message);
+      } else {
+        toast.error(error.message || "Error al agregar producto");
+      }
     } finally {
       setLoading(false);
     }

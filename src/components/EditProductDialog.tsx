@@ -7,6 +7,17 @@ import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Pencil } from "lucide-react";
+import { z } from "zod";
+
+const productSchema = z.object({
+  name: z.string().trim().min(1, "El nombre es requerido").max(200, "El nombre debe tener menos de 200 caracteres"),
+  description: z.string().max(2000, "La descripción debe tener menos de 2000 caracteres").optional(),
+  category: z.string().max(100, "La categoría debe tener menos de 100 caracteres").optional(),
+  image_url: z.union([
+    z.string().url("Debe ser una URL válida").max(500, "La URL debe tener menos de 500 caracteres"),
+    z.literal("")
+  ]).optional()
+});
 
 interface Product {
   id: string;
@@ -35,24 +46,36 @@ const EditProductDialog = ({ product, onProductUpdated }: EditProductDialogProps
     e.preventDefault();
     setLoading(true);
 
-    const { error } = await supabase
-      .from("products")
-      .update({
-        name: formData.name,
-        description: formData.description,
-        category: formData.category,
-        image_url: formData.image_url,
-      })
-      .eq("id", product.id);
+    try {
+      // Validate input
+      const validatedData = productSchema.parse(formData);
 
-    if (error) {
-      toast.error("Error al actualizar producto");
-    } else {
-      toast.success("Producto actualizado correctamente");
-      onProductUpdated();
-      setOpen(false);
+      const { error } = await supabase
+        .from("products")
+        .update({
+          name: validatedData.name,
+          description: validatedData.description || null,
+          category: validatedData.category || null,
+          image_url: validatedData.image_url || null,
+        })
+        .eq("id", product.id);
+
+      if (error) {
+        toast.error("Error al actualizar producto");
+      } else {
+        toast.success("Producto actualizado correctamente");
+        onProductUpdated();
+        setOpen(false);
+      }
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        toast.error(error.errors[0].message);
+      } else {
+        toast.error("Error al validar los datos");
+      }
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   return (

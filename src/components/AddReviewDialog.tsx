@@ -6,6 +6,12 @@ import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Star, MessageSquarePlus } from "lucide-react";
 import { toast } from "sonner";
+import { z } from "zod";
+
+const reviewSchema = z.object({
+  content: z.string().trim().min(1, "El comentario es requerido").max(5000, "El comentario debe tener menos de 5000 caracteres"),
+  rating: z.number().int().min(1, "Calificación mínima es 1").max(5, "Calificación máxima es 5")
+});
 
 interface AddReviewDialogProps {
   productId: string;
@@ -38,13 +44,16 @@ const AddReviewDialog = ({ productId, onReviewAdded }: AddReviewDialogProps) => 
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error("No autenticado");
 
-      const sentiment = analyzeSentiment(content, rating);
+      // Validate input
+      const validatedData = reviewSchema.parse({ content, rating });
+
+      const sentiment = analyzeSentiment(validatedData.content, validatedData.rating);
 
       const { error } = await supabase.from("reviews").insert({
         product_id: productId,
         user_id: user.id,
-        content,
-        rating,
+        content: validatedData.content,
+        rating: validatedData.rating,
         sentiment,
       });
 
@@ -56,7 +65,9 @@ const AddReviewDialog = ({ productId, onReviewAdded }: AddReviewDialogProps) => 
       setOpen(false);
       onReviewAdded();
     } catch (error: any) {
-      if (error.message.includes("duplicate")) {
+      if (error instanceof z.ZodError) {
+        toast.error(error.errors[0].message);
+      } else if (error.message.includes("duplicate")) {
         toast.error("Ya has dejado una reseña para este producto");
       } else {
         toast.error(error.message || "Error al agregar reseña");
