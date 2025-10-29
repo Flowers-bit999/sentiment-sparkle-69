@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { BarChart3, Search, TrendingUp, Shield, LogOut, LogIn } from "lucide-react";
+import { BarChart3, Search, TrendingUp, Shield, LogOut, LogIn, Package } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ProductCard } from "@/components/ProductCard";
@@ -155,6 +155,10 @@ const Index = () => {
           <div className="flex items-center gap-3">
             {user ? (
               <>
+                <Button onClick={() => navigate("/my-products")} variant="outline" className="gap-2">
+                  <Package className="w-4 h-4" />
+                  Mis Productos
+                </Button>
                 <AddProductDialog onProductAdded={fetchProducts} />
                 <Button onClick={handleSignOut} variant="outline" className="gap-2">
                   <LogOut className="w-4 h-4" />
